@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { PropTypes } from 'prop-types';
 import { Form, Button } from 'semantic-ui-react';
 import Validator from 'validator';
 import InlineError from '../messages/InlineError';
@@ -21,12 +22,19 @@ export class LoginForm extends Component {
 	onSubmit = () => {
 		const errors = this.validate(this.state.data);
 		this.setState({ errors });
+		if (Object.keys(errors).length === 0) {
+			this.props.submit(this.state.data);
+		}
 	};
 
 	validate = data => {
 		const errors = {};
 		if (!Validator.isEmail(data.email)) errors.email = 'Email is not valid';
+
 		if (!data.password) errors.password = "Password can't be blank!";
+		else if (data.password.length < 6)
+			errors.password = 'Password must be at least 6 characters!';
+
 		return errors;
 	};
 
@@ -63,5 +71,9 @@ export class LoginForm extends Component {
 		);
 	}
 }
+
+LoginForm.propTypes = {
+	submit: PropTypes.func.isRequired
+};
 
 export default LoginForm;
