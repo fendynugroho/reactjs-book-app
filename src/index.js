@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { createStore, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
 import thunk from 'redux-thunk';
+import decode from 'jwt-decode';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import 'semantic-ui-css/semantic.min.css';
@@ -17,7 +18,12 @@ const store = createStore(
 );
 
 if (localStorage.bookJWT) {
-	const user = { token: localStorage.bookJWT };
+	const payload = decode(localStorage.bookJWT);
+	const user = {
+		token: localStorage.bookJWT,
+		email: payload.email,
+		confirmed: payload.confirmed
+	};
 	store.dispatch(userLoggedIn(user));
 }
 
